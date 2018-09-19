@@ -40,6 +40,7 @@ namespace SubProvisioner
         public string TemplateUri { get; set; }
         public string ParametersUri { get; set; }
         public string ResourceGroup { get; set; }
+        public string ResourceGroupLocation { get; set; }
     }
 
     public class GraphUser

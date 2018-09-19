@@ -33,7 +33,7 @@ namespace SubProvisioner
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 body = JsonConvert.DeserializeObject<DeployRequest>(requestBody);
-                if (body.SubscriptionID != null & body.TenantID != null & body.TemplateUri != null & body.ResourceGroup != null)
+                if (body.SubscriptionID != null & body.TenantID != null & body.TemplateUri != null & body.ResourceGroup != null & body.ResourceGroupLocation != null)
                 {
                     logs.Add("Request looks to be valid");
                 }
@@ -71,6 +71,23 @@ namespace SubProvisioner
                 catch (Exception e)
                 {
                     logs.Add("Failed to request token for Azure Management: " + e.Message);
+                    return logs;
+                }
+                try
+                {
+                    HttpResponseMessage result = httpclient.GetAsync($"https://management.azure.com/subscriptions/{body.SubscriptionID}/resourcegroups/{body.ResourceGroup}?api-version=2018-02-01").Result;
+                    if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        logs.Add("Looks like resource group doesn't exist, creating it...");
+                        StringContent rg = new StringContent(JsonConvert.SerializeObject(new { location = body.ResourceGroupLocation }), Encoding.UTF8, "application/json");
+                        HttpResponseMessage createrg = httpclient.PutAsync($"https://management.azure.com/subscriptions/{body.SubscriptionID}/resourcegroups/{body.ResourceGroup}?api-version=2018-02-01", rg).Result;
+                        createrg.EnsureSuccessStatusCode();
+                        logs.Add($"Successfully created resource group '{body.ResourceGroup}'");
+                    }
+                }
+                catch (Exception)
+                {
+                    logs.Add($"Failed to create resource group '{body.ResourceGroup}'");
                     return logs;
                 }
                 try
