@@ -25,12 +25,21 @@ namespace SubProvisioner
         }
     }
 
-    public class RequestBody
+    public class ProvisionRequest
     {
         public Guid TenantID { get; set; }
         public Guid SubscriptionID { get; set; }
         public string UserEmail { get; set; }
 
+    }
+
+    public class DeployRequest
+    {
+        public Guid TenantID { get; set; }
+        public Guid SubscriptionID { get; set; }
+        public string TemplateUri { get; set; }
+        public string ParametersUri { get; set; }
+        public string ResourceGroup { get; set; }
     }
 
     public class GraphUser
@@ -52,6 +61,7 @@ namespace SubProvisioner
         public string name { get; set; }
         public RbacProperties properties { get; set; }
     }
+
     public class RbacProperties
     {
         public string roleDefinitionId { get; set; }
@@ -61,5 +71,28 @@ namespace SubProvisioner
         public string updatedOn { get; set; }
         public string createdBy { get; set; }
         public string updatedBy { get; set; }
+    }
+    public class TemplateLink
+    {
+        public string uri { get; set; }
+        public string contentVersion { get; set; }
+    }
+
+    public class ParametersLink
+    {
+        public string uri { get; set; }
+        public string contentVersion { get; set; }
+    }
+
+    public class DeploymentProperties
+    {
+        public TemplateLink templateLink { get; set; }
+        public string mode { get; set; }
+        public ParametersLink parametersLink { get; set; }
+    }
+
+    public class AzureDeployment
+    {
+        public DeploymentProperties properties { get; set; }
     }
 }

@@ -29,11 +29,11 @@ namespace SubProvisioner
             logs.Add("Received request");
 
             //Parse incoming request
-            RequestBody body = new RequestBody();
+            ProvisionRequest body = new ProvisionRequest();
             try
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                body = JsonConvert.DeserializeObject<RequestBody>(requestBody);
+                body = JsonConvert.DeserializeObject<ProvisionRequest>(requestBody);
                 if (body.SubscriptionID!=null & body.TenantID!=null & body.UserEmail!=null)
                 {
                     logs.Add("Request looks to be valid");
